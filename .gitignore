@@ -1,0 +1,15 @@
+# Ignore build artifacts
+build/
+*.dll
+*.exe
+*.so
+*.lib
+*.pdb
+*.obj
+
+# Ignore Python cache
+__pycache__/
+
+# Ignore Visual Studio / VS Code temp files
+.vs/
+.vscode/
