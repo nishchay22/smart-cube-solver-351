@@ -10,6 +10,7 @@
 #include <array>
 #include <cstring>
 #include <tuple>
+#include <cstdint>
 
 using namespace std;
 
