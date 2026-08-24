@@ -37,10 +37,20 @@ This project is a massive architectural and user-experience improvement over tra
 
 ## ⚙️ How It Works Under the Hood
 
-1. **Initialization:** When the Flask server (`app.py`) starts, it loads the compiled C++ shared library using Python's `ctypes`. The C++ engine initializes itself (e.g. generating search and pruning tables) so that solves are near-instantaneous.
+### The C++ Solver Engine: Graph Search & IDA*
+
+At the core of this project is a highly optimized C++ engine that treats the Rubik's Cube as a massive graph traversal problem:
+
+1. **State as a Graph Node:** Every possible configuration of the Rubik's Cube (all 43 quintillion of them!) is represented as a node in a mathematical graph. A single twist of a face (e.g., `U`, `R'`) is an edge connecting one node to another. The solved state is our target node.
+2. **IDA* Algorithm:** To find the absolute shortest path from a scrambled state to the solved state, the engine uses **IDA\*** (Iterative Deepening A*). Standard BFS or A* would run out of memory trying to store millions of cube states. IDA* uses a memory-efficient depth-first search approach bounded by an increasing cost threshold, giving us the mathematically shortest path without eating up all your RAM.
+3. **Pattern Databases (Heuristics):** IDA* is only fast if it knows roughly how far away it is from the goal. The engine uses **Pattern Databases**—precomputed tables loaded into memory on startup—that perfectly map out the exact number of moves needed to solve specific subsets of the cube (like just the corners). This acts as a powerful heuristic, allowing the algorithm to heavily prune the search tree and instantly skip millions of dead-end paths.
+
+### Full System Architecture
+
+1. **Initialization:** When the Flask server (`app.py`) starts, it loads the compiled C++ shared library using Python's `ctypes`. The C++ engine initializes itself, generating its heuristic Pattern Databases so that solves are near-instantaneous.
 2. **User Input:** The user types a scramble sequence (e.g., `R U R' U'`) into the web interface.
 3. **API Call:** The frontend JavaScript makes a `POST /solve` request to the Flask server.
-4. **C++ Execution:** Flask passes the scramble string to the C++ shared library. The C++ engine calculates the optimal solution moves and populates a C-string buffer.
+4. **C++ Execution:** Flask passes the scramble string to the C++ shared library. The engine applies the scramble, runs the IDA* search against its Pattern Databases, and writes the optimal solution moves into a C-string buffer.
 5. **Animation:** Flask reads the string buffer and returns it as a JSON response. The frontend reads the solution and animates it using the `TwistyPlayer` 3D engine.
 
 ---
