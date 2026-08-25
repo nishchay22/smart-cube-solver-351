@@ -4,9 +4,10 @@ project(SmartCubeSolver)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Source files (Make sure these exist in the 'src' folder!)
+# Source files
 set(SOURCES 
     src/interface.cpp
+    src/solver.cpp
 )
 
 # Create the shared library (DLL)

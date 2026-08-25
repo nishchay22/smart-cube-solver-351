@@ -1,4 +1,5 @@
-#include "solver.hpp"
+#include "tables.hpp"
+#include "search.hpp"
 #include <cstring>
 #include <iostream>
 
